@@ -26,7 +26,7 @@ jobs:
           mkdir tmp-gitleaks
           cd tmp-gitleaks
           echo ''
-          echo "Url utilizada para download do Gitleaks: ${{ env.URL_GITLEAKS_RELEASE }}
+          echo "Url utilizada para download do Gitleaks: ${{ env.URL_GITLEAKS_RELEASE }}"
           echo ''
           curl -L -o gitleaks.tar.gz ${{ env.URL_GITLEAKS_RELEASE }}
           tar -xvzf gitleaks.tar.gz

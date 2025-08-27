@@ -33,7 +33,7 @@ jobs:
           cd gitleaks
           chmod +x gitleaks
           sudo mv gitleaks /usr/local/bin/
-          cd ../..
+          cd ..
           rm -rf tmp-gitleaks
 
       - name: Testar o Gitleaks

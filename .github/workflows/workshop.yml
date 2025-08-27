@@ -30,7 +30,7 @@ jobs:
           echo ''
           curl -L -o gitleaks.tar.gz ${{ env.URL_GITLEAKS_RELEASE }}
           tar -xvzf gitleaks.tar.gz
-          cd gitleaks
+          ls
           chmod +x gitleaks
           sudo mv gitleaks /usr/local/bin/
           cd ..

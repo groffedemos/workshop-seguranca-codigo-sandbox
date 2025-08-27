@@ -49,9 +49,8 @@ jobs:
         run: |
           curl -L -o ./results/report-basic.tmpl https://raw.githubusercontent.com/gitleaks/gitleaks/refs/heads/master/report_templates/basic.tmpl
           gitleaks dir . \
-            --report-format=template \
-            --report-path=./results/results-secrets.html \
-            --report-template=./results/report-basic.tmpl
+            --report-format=sarif \
+            --report-path=./results/results-secrets.sarif
 
       - name: Exibir conteúdo do diretório results
         if: always()
@@ -60,6 +59,13 @@ jobs:
           pwd
           ls -l
 
+      - name: Upload arquivo SARIF file
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ./results/results-secrets.sarif
+          category: sast-tools
+          
   build:
     needs: secrets_scanning
     runs-on: ubuntu-latest

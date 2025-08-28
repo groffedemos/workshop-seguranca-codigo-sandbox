@@ -135,7 +135,7 @@ jobs:
         run: |
           cd ${{ env.DIR_DEVOPS_ARTIFACTS }}
           checkov -d . \
-                  --check CKV_K8S_11,CKV_K8S_13,CKV_K8S_20 \ 
+                  -c CKV_K8S_11,CKV_K8S_13,CKV_K8S_20 \ 
                   --framework kubernetes \
                   -o cli -o sarif \
                   --output-file-path ./results/results-kubernetes.sarif

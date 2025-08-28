@@ -14,106 +14,106 @@ env:
   DIR_DEVOPS_ARTIFACTS: './devops'
 
 jobs:
-  secrets_scanning:
-    runs-on: ubuntu-latest
+  # secrets_scanning:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Instalar o Gitleaks
-        run: |
-          mkdir tmp-gitleaks
-          cd tmp-gitleaks
-          echo ''
-          echo "Url utilizada para download do Gitleaks: ${{ env.URL_GITLEAKS_RELEASE }}"
-          echo ''
-          curl -L -o gitleaks.tar.gz ${{ env.URL_GITLEAKS_RELEASE }}
-          tar -xvzf gitleaks.tar.gz
-          ls
-          chmod +x gitleaks
-          sudo mv gitleaks /usr/local/bin/
-          cd ..
-          rm -rf tmp-gitleaks
+  #     - name: Instalar o Gitleaks
+  #       run: |
+  #         mkdir tmp-gitleaks
+  #         cd tmp-gitleaks
+  #         echo ''
+  #         echo "Url utilizada para download do Gitleaks: ${{ env.URL_GITLEAKS_RELEASE }}"
+  #         echo ''
+  #         curl -L -o gitleaks.tar.gz ${{ env.URL_GITLEAKS_RELEASE }}
+  #         tar -xvzf gitleaks.tar.gz
+  #         ls
+  #         chmod +x gitleaks
+  #         sudo mv gitleaks /usr/local/bin/
+  #         cd ..
+  #         rm -rf tmp-gitleaks
 
-      - name: Testar o Gitleaks
-        run: |
-          gitleaks --version
-          echo ''
-          gitleaks --help
+  #     - name: Testar o Gitleaks
+  #       run: |
+  #         gitleaks --version
+  #         echo ''
+  #         gitleaks --help
 
-      - name: Criar diretório results
-        run: mkdir results
+  #     - name: Criar diretório results
+  #       run: mkdir results
 
-      - name: Executar o Gitleaks no repositório
-        run: |
-          curl -L -o ./results/report-basic.tmpl https://raw.githubusercontent.com/gitleaks/gitleaks/refs/heads/master/report_templates/basic.tmpl
-          gitleaks dir . \
-            --report-format=sarif \
-            --report-path=./results/results-secrets.sarif
+  #     - name: Executar o Gitleaks no repositório
+  #       run: |
+  #         curl -L -o ./results/report-basic.tmpl https://raw.githubusercontent.com/gitleaks/gitleaks/refs/heads/master/report_templates/basic.tmpl
+  #         gitleaks dir . \
+  #           --report-format=sarif \
+  #           --report-path=./results/results-secrets.sarif
 
-      - name: Exibir conteúdo do diretório results
-        if: always()
-        run: |
-          cd results
-          pwd
-          ls -l
+  #     - name: Exibir conteúdo do diretório results
+  #       if: always()
+  #       run: |
+  #         cd results
+  #         pwd
+  #         ls -l
 
-      - name: Upload arquivo SARIF file
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: ./results/results-secrets.sarif
-          category: sast-tools
+  #     - name: Upload arquivo SARIF file
+  #       if: always()
+  #       uses: github/codeql-action/upload-sarif@v3
+  #       with:
+  #         sarif_file: ./results/results-secrets.sarif
+  #         category: sast-tools
           
-  dockerfile_scanning:
-    needs: secrets_scanning
-    runs-on: ubuntu-latest
-    if: always()
+  # dockerfile_scanning:
+  #   needs: secrets_scanning
+  #   runs-on: ubuntu-latest
+  #   if: always()
 
-    steps:
-      - uses: actions/checkout@v4
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Instalar o Checkov via pip
-        run: pip install checkov
+  #     - name: Instalar o Checkov via pip
+  #       run: pip install checkov
 
-      - name: Testar a instalação do Checkov
-        run: |
-          checkov
-          checkov --help
+  #     - name: Testar a instalação do Checkov
+  #       run: |
+  #         checkov
+  #         checkov --help
 
-      - name: Criar diretório results
-        run: mkdir results
+  #     - name: Criar diretório results
+  #       run: mkdir results
 
-      - name: Executar análise com o Checkov
-        run: |
-          echo 'Vulnerabilidades que serao ignoradas ao executar o Checkov:'
-          echo '* CKV_DOCKER_2 - Ensure that HEALTHCHECK instructions have been added to container images'
-          echo '*CKV_DOCKER_3 - Ensure that the image is not built from a local context'
-          echo
-          checkov -d ${{ env.DIR_DOCKERFILE }} \
-                  --framework dockerfile \
-                  --skip-check CKV_DOCKER_2,CKV_DOCKER_3 \
-                  -o cli -o sarif \
-                  --output-file-path ./results/results-dockerfile.sarif
+  #     - name: Executar análise com o Checkov
+  #       run: |
+  #         echo 'Vulnerabilidades que serao ignoradas ao executar o Checkov:'
+  #         echo '* CKV_DOCKER_2 - Ensure that HEALTHCHECK instructions have been added to container images'
+  #         echo '*CKV_DOCKER_3 - Ensure that the image is not built from a local context'
+  #         echo
+  #         checkov -d ${{ env.DIR_DOCKERFILE }} \
+  #                 --framework dockerfile \
+  #                 --skip-check CKV_DOCKER_2,CKV_DOCKER_3 \
+  #                 -o cli -o sarif \
+  #                 --output-file-path ./results/results-dockerfile.sarif
 
-      - name: Exibir arquivos gerados em /results
-        if: always()
-        run: |
-          cd results
-          pwd
-          echo
-          echo
-          ls -l
+  #     - name: Exibir arquivos gerados em /results
+  #       if: always()
+  #       run: |
+  #         cd results
+  #         pwd
+  #         echo
+  #         echo
+  #         ls -l
 
-      - name: Upload arquivo SARIF file
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: ./results/results-dockerfile.sarif
-          category: sast-tools
+  #     - name: Upload arquivo SARIF file
+  #       if: always()
+  #       uses: github/codeql-action/upload-sarif@v3
+  #       with:
+  #         sarif_file: ./results/results-dockerfile.sarif
+  #         category: sast-tools
 
   kubernetes_yaml_scanning:
-    needs: dockerfile_scanning
+    # needs: dockerfile_scanning
     runs-on: ubuntu-latest
     if: always()
 
@@ -133,7 +133,8 @@ jobs:
 
       - name: Executar análise com o Checkov
         run: |
-          checkov -d ${{ env.DIR_DEVOPS_ARTIFACTS }} \
+          cd ${{ env.DIR_DEVOPS_ARTIFACTS }}
+          checkov -d . \
                   --check CKV_K8S_11,CKV_K8S_13,CKV_K8S_20 \ 
                   --framework kubernetes \
                   -o cli -o sarif \

@@ -9,10 +9,10 @@ on:
   workflow_dispatch:
 
 env:
-  DIR_MOBILEAPP: './src/AppGroffe'
   DIR_AAB_FILE: 'android/app/build/outputs/bundle/release'
   ARTIFACT_AAB_FILE: 'aab-appgroffe'
   URL_GITLEAKS_RELEASE: 'https://github.com/gitleaks/gitleaks/releases/download/v8.28.0/gitleaks_8.28.0_linux_x64.tar.gz'
+  DIR_DOCKERFILE: './src/ConsoleAppJobNotificacaoHttp'
 
 jobs:
   secrets_scanning:
@@ -87,7 +87,7 @@ jobs:
 
       - name: Executar análise com o Checkov
         run: |
-          checkov -d ./src/ConsoleAppJobNotificacaoHttp \
+          checkov -d ${{ env.DIR_DOCKERFILE }} \
                   --framework dockerfile \
                   -o cli -o sarif \
                   --output-file-path ./results/results-dockerfile.sarif
@@ -96,6 +96,9 @@ jobs:
         if: always()
         run: |
           cd results
+          pwd
+          echo
+          echo
           ls -l
 
       - name: Upload arquivo SARIF file
@@ -104,7 +107,15 @@ jobs:
         with:
           sarif_file: ./results/results-dockerfile.sarif
           category: sast-tools
-  
+
+  kubernetes_yaml_scanning:
+    needs: dockerfile_scanning
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - uses: actions/checkout@v4
+
   build:
     needs: dockerfile_scanning
     runs-on: ubuntu-latest

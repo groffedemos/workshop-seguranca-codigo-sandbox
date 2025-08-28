@@ -127,7 +127,7 @@ jobs:
 
       - name: Configurar permissões do diretório para uso do KICS
         run: |
-          cd $DEVOPS_ARTIFACTS_DIRECTORY
+          cd ${{ env.DIR_DEVOPS_ARTIFACTS }}
           echo '**** Diretório:'
           echo $PWD
           echo ''
@@ -137,7 +137,7 @@ jobs:
 
       - name: Executar análise de scripts com o KICS
         run: |
-          cd $DEVOPS_ARTIFACTS_DIRECTORY
+          cd ${{ env.DIR_DEVOPS_ARTIFACTS }}
           docker run -t -v $PWD:/path checkmarx/kics scan \
             -p /path \
             -o "/path/" \
@@ -149,7 +149,7 @@ jobs:
       - name: Exibir arquivos após execução do KICS
         if: always()
         run: |
-          cd $DEVOPS_ARTIFACTS_DIRECTORY
+          cd ${{ env.DIR_DEVOPS_ARTIFACTS }}
           echo '*** Diretório ***'
           pwd
           echo ''

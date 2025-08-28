@@ -66,10 +66,42 @@ jobs:
           sarif_file: ./results/results-secrets.sarif
           category: sast-tools
           
-  build:
+  dockerfile_scanning:
     needs: secrets_scanning
     runs-on: ubuntu-latest
 
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar o Checkov via pip
+        run: pip install checkov
+
+      - name: Testar a instalação do Checkov
+        run: |
+          checkov
+          checkov --help
+
+      - name: Criar diretório results
+        run: mkdir results
+
+      - name: Executar análise com o Checkov
+        run: |
+          checkov -d ./src/ConsoleAppJobNotificacaoHttp \
+                  --framework dockerfile \
+                  -o cli -o sarif \
+                  --output-file-path ./results/results-dockerfile.sarif
+
+      - name: Exibir arquivos gerados em /results
+        if: always()
+        run: |
+          cd results
+          ls -l
+  
+  build:
+    needs: dockerfile_scanning
+    runs-on: ubuntu-latest
+    if: always()
+ 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4

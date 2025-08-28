@@ -128,6 +128,14 @@ jobs:
 
       - name: Executar análise com o Checkov
         run: |
+          cd ${{ env.DIR_DEVOPS_ARTIFACTS }}
+          echo
+          echo
+          pwd
+          echo
+          ls -l
+          echo
+          echo
           checkov -d ${{ env.DIR_DEVOPS_ARTIFACTS }} \
                   --framework kubernetes \
                   -o cli -o sarif \

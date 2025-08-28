@@ -69,6 +69,7 @@ jobs:
   dockerfile_scanning:
     needs: secrets_scanning
     runs-on: ubuntu-latest
+    if: always()
 
     steps:
       - uses: actions/checkout@v4
@@ -100,7 +101,6 @@ jobs:
   build:
     needs: dockerfile_scanning
     runs-on: ubuntu-latest
-    if: always()
  
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it

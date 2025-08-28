@@ -86,9 +86,13 @@ jobs:
 
       - name: Executar análise com o Checkov
         run: |
+          echo 'Vulnerabilidades que serao ignoradas ao executar o Checkov:'
+          echo '* CKV_DOCKER_2 - Ensure that HEALTHCHECK instructions have been added to container images'
+          echo '*CKV_DOCKER_3 - Ensure that the image is not built from a local context'
+          echo
           checkov -d ${{ env.DIR_DOCKERFILE }} \
                   --framework dockerfile \
-                  --soft-fail \
+                  --skip-check CKV_DOCKER_2,CKV_DOCKER_3 \
                   -o cli -o sarif \
                   --output-file-path ./results/results-dockerfile.sarif
 

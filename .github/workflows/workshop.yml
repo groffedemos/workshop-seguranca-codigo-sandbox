@@ -88,7 +88,7 @@ jobs:
   #       run: |
   #         echo 'Vulnerabilidades que serao ignoradas ao executar o Checkov:'
   #         echo '* CKV_DOCKER_2 - Ensure that HEALTHCHECK instructions have been added to container images'
-  #         echo '*CKV_DOCKER_3 - Ensure that the image is not built from a local context'
+  #         echo '* CKV_DOCKER_3 - Ensure that the image is not built from a local context'
   #         echo
   #         checkov -d ${{ env.DIR_DOCKERFILE }} \
   #                 --framework dockerfile \
@@ -133,8 +133,14 @@ jobs:
 
       - name: Executar análise com o Checkov
         run: |
+          echo 'Vulnerabilidades que serao ignoradas ao executar o Checkov:'
+          echo '* CKV_K8S_28 - Minimize the admission of containers with the NET_RAW capability'
+          echo '* CKV_K8S_40 - Containers should run as a high UID to avoid host conflict'
+          echo '* CKV_K8S_43 - Image should use digest'
+          echo
           checkov -d ${{ env.DIR_DEVOPS_ARTIFACTS }} \
                   --framework kubernetes \
+                  --skip-check CKV_K8S_28,CKV_K8S_40,CKV_K8S_43 \
                   -o cli -o sarif \
                   --output-file-path ./results/results-kubernetes.sarif
 

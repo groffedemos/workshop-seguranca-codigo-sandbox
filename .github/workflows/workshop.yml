@@ -12,7 +12,7 @@ env:
   ARTIFACT_AAB_FILE: 'aab-appgroffe'
   URL_GITLEAKS_RELEASE: 'https://github.com/gitleaks/gitleaks/releases/download/v8.28.0/gitleaks_8.28.0_linux_x64.tar.gz'
   DIR_DOCKERFILE: './src/ConsoleAppJobNotificacaoHttp'
-  DIR_DEVOPS_ARTIFACTS: 'android/app/build/outputs/bundle/release'
+  DIR_DEVOPS_ARTIFACTS: './.devops'
 
 jobs:
   secrets_scanning:

@@ -88,6 +88,7 @@ jobs:
         run: |
           checkov -d ${{ env.DIR_DOCKERFILE }} \
                   --framework dockerfile \
+                  --hard-fail-on CKV_DOCKER_7 \
                   -o cli -o sarif \
                   --output-file-path ./results/results-dockerfile.sarif
 

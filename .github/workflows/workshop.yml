@@ -97,6 +97,13 @@ jobs:
         run: |
           cd results
           ls -l
+
+      - name: Upload arquivo SARIF file
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ./results/results-dockerfile.sarif
+          category: sast-tools
   
   build:
     needs: dockerfile_scanning

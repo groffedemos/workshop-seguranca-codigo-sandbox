@@ -9,10 +9,10 @@ on:
   workflow_dispatch:
 
 env:
-  DIR_AAB_FILE: 'android/app/build/outputs/bundle/release'
   ARTIFACT_AAB_FILE: 'aab-appgroffe'
   URL_GITLEAKS_RELEASE: 'https://github.com/gitleaks/gitleaks/releases/download/v8.28.0/gitleaks_8.28.0_linux_x64.tar.gz'
   DIR_DOCKERFILE: './src/ConsoleAppJobNotificacaoHttp'
+  DIR_DEVOPS_ARTIFACTS: 'android/app/build/outputs/bundle/release'
 
 jobs:
   secrets_scanning:
@@ -115,6 +115,53 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Baixar a imagem do KICS
+        run: docker pull checkmarx/kics:latest
+
+      - name: Exibir imagens no ambiente local
+        run: docker images
+
+      - name: Exibir opções da linha de comando do KICS
+        run: docker run -t checkmarx/kics scan --help
+
+      - name: Configurar permissões do diretório para uso do KICS
+        run: |
+          cd $DEVOPS_ARTIFACTS_DIRECTORY
+          echo '**** Diretório:'
+          echo $PWD
+          echo ''
+          chmod -R 777 .
+          echo 'Permissões após ajustes'
+          ls -ld
+
+      - name: Executar análise de scripts com o KICS
+        run: |
+          cd $DEVOPS_ARTIFACTS_DIRECTORY
+          docker run -t -v $PWD:/path checkmarx/kics scan \
+            -p /path \
+            -o "/path/" \
+            --fail-on critical \
+            --report-formats sarif \
+            --output-name results-kubernetes.sarif \
+            --type Kubernetes
+
+      - name: Exibir arquivos após execução do KICS
+        if: always()
+        run: |
+          cd $DEVOPS_ARTIFACTS_DIRECTORY
+          echo '*** Diretório ***'
+          pwd
+          echo ''
+          echo 'Arquivos:'
+          ls -l
+
+      - name: Upload arquivo SARIF file
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ./results/results-kubernetes.sarif
+          category: sast-tools
 
   build:
     needs: kubernetes_yaml_scanning

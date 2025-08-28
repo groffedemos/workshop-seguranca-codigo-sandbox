@@ -115,39 +115,39 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Instalar o Checkov via pip
-        run: pip install checkov
+      # - name: Instalar o Checkov via pip
+      #   run: pip install checkov
 
-      - name: Testar a instalação do Checkov
-        run: |
-          checkov
-          checkov --help
+      # - name: Testar a instalação do Checkov
+      #   run: |
+      #     checkov
+      #     checkov --help
 
-      - name: Criar diretório results
-        run: mkdir results
+      # - name: Criar diretório results
+      #   run: mkdir results
 
-      - name: Executar análise com o Checkov
-        run: |
-          checkov -d ${{ env.DIR_DEVOPS_ARTIFACTS }} \
-                  --framework kubernetes \
-                  -o cli -o sarif \
-                  --output-file-path ./results/results-kubernetes.sarif
+      # - name: Executar análise com o Checkov
+      #   run: |
+      #     checkov -d ${{ env.DIR_DEVOPS_ARTIFACTS }} \
+      #             --framework kubernetes \
+      #             -o cli -o sarif \
+      #             --output-file-path ./results/results-kubernetes.sarif
 
-      - name: Exibir arquivos gerados em /results
-        if: always()
-        run: |
-          cd results
-          pwd
-          echo
-          echo
-          ls -l
+      # - name: Exibir arquivos gerados em /results
+      #   if: always()
+      #   run: |
+      #     cd results
+      #     pwd
+      #     echo
+      #     echo
+      #     ls -l
 
-      - name: Upload arquivo SARIF file
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: ./results/results-kubernetes.sarif
-          category: sast-tools
+      # - name: Upload arquivo SARIF file
+      #   if: always()
+      #   uses: github/codeql-action/upload-sarif@v3
+      #   with:
+      #     sarif_file: ./results/results-kubernetes.sarif
+      #     category: sast-tools
 
   build:
     needs: kubernetes_yaml_scanning

@@ -134,8 +134,8 @@ jobs:
       - name: Executar análise com o Checkov
         run: |
           checkov -d ${{ env.DIR_DEVOPS_ARTIFACTS }} \
-                  --framework kubernetes \
                   --check CKV_K8S_11,CKV_K8S_13,CKV_K8S_20 \ 
+                  --framework kubernetes \
                   -o cli -o sarif \
                   --output-file-path ./results/results-kubernetes.sarif
 
